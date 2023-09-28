@@ -12,5 +12,10 @@ jobs:
         steps:
             - uses: actions/checkout@v3
               with:
-                  ref: ${{ github.event.pull_request.head.ref }}
+                # Check out the commit hash of the PR branch, since the branch
+                # itself may have already been deleted.
+                ref: "${{ github.event.pull_request.head.sha }}"
+            # Create a branch locally with the same name as the PR branch, so
+            # operations that rely on the branch name will work as expected.
+            - run: git switch --create "${{ github.event.pull_request.head.ref }}"
             - run: echo "$(git branch --show-current)"
